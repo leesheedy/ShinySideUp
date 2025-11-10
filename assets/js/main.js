@@ -278,4 +278,32 @@ ready(() => {
       alert('Live chat is coming soon. Reach out via 1300 555 010 in the meantime!');
     });
   }
+
+  const backToTop = document.createElement('button');
+  backToTop.type = 'button';
+  backToTop.className = 'back-to-top';
+  backToTop.setAttribute('data-back-to-top', '');
+  backToTop.setAttribute('aria-label', 'Back to top');
+  backToTop.innerHTML = '<span aria-hidden="true">↑</span>';
+  document.body.appendChild(backToTop);
+
+  const updateBackToTopVisibility = () => {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+    const maxScrollable = Math.max(scrollHeight - clientHeight, 1);
+    const progress = scrollTop / maxScrollable;
+    const isVisible = progress > 0.35;
+    backToTop.classList.toggle('is-visible', isVisible);
+  };
+
+  updateBackToTopVisibility();
+
+  window.addEventListener('scroll', updateBackToTopVisibility, { passive: true });
+
+  backToTop.addEventListener('click', () => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      window.scrollTo(0, 0);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
 });
