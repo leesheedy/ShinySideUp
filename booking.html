@@ -205,11 +205,18 @@
                 <div class="form-row two">
                   <label>
                     <span>Location / suburb</span>
-                    <input type="text" name="location" required aria-label="Location or suburb" placeholder="e.g. Wodonga, Albury, Thurgoona" />
+                    <input
+                      type="text"
+                      name="location"
+                      required
+                      aria-label="Location or suburb"
+                      placeholder="e.g. Wodonga, Albury, Thurgoona"
+                      data-step-summary="location"
+                    />
                   </label>
                   <label>
                     <span>Property access</span>
-                    <select name="access" aria-label="Property access">
+                    <select name="access" aria-label="Property access" data-step-summary="access">
                       <option value="ground">Ground level</option>
                       <option value="stairs">Upper level / stairs</option>
                       <option value="lift">Lift access</option>
@@ -250,7 +257,7 @@
                   </label>
                   <label>
                     <span>Cleaning frequency</span>
-                  <select name="frequency" aria-label="Cleaning frequency">
+                    <select name="frequency" aria-label="Cleaning frequency" data-step-summary="frequency">
                       <option value="one_off">One-off</option>
                       <option value="weekly">Weekly</option>
                       <option value="fortnightly">Fortnightly</option>
@@ -290,7 +297,13 @@
                 </fieldset>
                 <label>
                   <span>Anything special we should know?</span>
-                  <textarea name="notes" rows="4" aria-label="Additional information" placeholder="Access instructions, parking info, pets on site, or surfaces that need extra care."></textarea>
+                  <textarea
+                    name="notes"
+                    rows="4"
+                    aria-label="Additional information"
+                    placeholder="Access instructions, parking info, pets on site, or surfaces that need extra care."
+                    data-step-summary="notes"
+                  ></textarea>
                 </label>
               </fieldset>
 
@@ -360,6 +373,10 @@
                 <dd data-summary-value="service">Select a service to begin.</dd>
               </div>
               <div>
+                <dt>Location</dt>
+                <dd data-summary-value="location">Add your suburb</dd>
+              </div>
+              <div>
                 <dt>Bedrooms</dt>
                 <dd data-summary-value="bedrooms">Add bedroom count</dd>
               </div>
@@ -372,8 +389,16 @@
                 <dd data-summary-value="floorArea">Optional</dd>
               </div>
               <div>
+                <dt>Property access</dt>
+                <dd data-summary-value="access">Ground level</dd>
+              </div>
+              <div>
                 <dt>Extras</dt>
                 <dd data-summary-value="extras">None selected</dd>
+              </div>
+              <div>
+                <dt>Frequency</dt>
+                <dd data-summary-value="frequency">One-off</dd>
               </div>
               <div>
                 <dt>Preferred date</dt>
@@ -390,6 +415,10 @@
               <div>
                 <dt>Contact details</dt>
                 <dd data-summary-value="contactDetails">Add your name &amp; number</dd>
+              </div>
+              <div>
+                <dt>Notes</dt>
+                <dd data-summary-value="notes">Add notes for our team</dd>
               </div>
             </dl>
             <div class="booking-summary__help">
