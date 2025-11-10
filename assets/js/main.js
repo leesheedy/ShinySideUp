@@ -1,3 +1,5 @@
+document.documentElement.classList.add('js-enabled');
+
 function ready(fn) {
   if (document.readyState !== 'loading') {
     fn();
@@ -719,6 +721,203 @@ ready(() => {
       alert('Live chat is coming soon. Reach out via 1300 555 010 in the meantime!');
     });
   }
+
+  const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let prefersReducedMotion = reduceMotionQuery.matches;
+  const animatedRegistry = new Set();
+  let animationObserver = null;
+
+  const revealAnimatedElement = (element) => {
+    if (!element) {
+      return;
+    }
+    element.classList.add('is-visible');
+  };
+
+  const initAnimationObserver = () => {
+    if (animationObserver || prefersReducedMotion) {
+      return;
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      animatedRegistry.forEach((element) => {
+        revealAnimatedElement(element);
+      });
+      prefersReducedMotion = true;
+      return;
+    }
+
+    animationObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            revealAnimatedElement(entry.target);
+            animationObserver.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: '0px 0px -12% 0px',
+        threshold: 0.15,
+      }
+    );
+  };
+
+  const registerAnimatedElement = (element) => {
+    if (!(element instanceof HTMLElement)) {
+      return;
+    }
+
+    if (!element.dataset.animate) {
+      return;
+    }
+
+    if (!animatedRegistry.has(element)) {
+      animatedRegistry.add(element);
+    }
+
+    if (prefersReducedMotion) {
+      revealAnimatedElement(element);
+      return;
+    }
+
+    initAnimationObserver();
+    if (animationObserver) {
+      animationObserver.observe(element);
+    }
+  };
+
+  const handleMotionPreferenceChange = (event) => {
+    prefersReducedMotion = event.matches;
+    if (prefersReducedMotion) {
+      animatedRegistry.forEach((element) => {
+        if (animationObserver) {
+          animationObserver.unobserve(element);
+        }
+        revealAnimatedElement(element);
+      });
+    } else {
+      animatedRegistry.forEach((element) => {
+        if (!element.classList.contains('is-visible')) {
+          registerAnimatedElement(element);
+        }
+      });
+    }
+  };
+
+  if (typeof reduceMotionQuery.addEventListener === 'function') {
+    reduceMotionQuery.addEventListener('change', handleMotionPreferenceChange);
+  } else if (typeof reduceMotionQuery.addListener === 'function') {
+    reduceMotionQuery.addListener(handleMotionPreferenceChange);
+  }
+
+  const assignAnimationToElements = (selectorOrElements, animation = 'fade-up', options = {}) => {
+    const elements =
+      typeof selectorOrElements === 'string'
+        ? document.querySelectorAll(selectorOrElements)
+        : selectorOrElements;
+
+    if (!elements) {
+      return;
+    }
+
+    const delay = Number.parseFloat(options.delay || 0);
+    const stagger = Number.parseFloat(options.stagger || 0);
+
+    Array.from(elements).forEach((element, index) => {
+      if (!(element instanceof HTMLElement)) {
+        return;
+      }
+
+      if (!element.dataset.animate) {
+        element.dataset.animate = animation;
+      }
+
+      const existingDelay = element.style.getPropertyValue('--animate-delay');
+      const nextDelay = delay + (stagger > 0 ? stagger * index : 0);
+      if (!existingDelay && nextDelay > 0) {
+        element.style.setProperty('--animate-delay', `${Math.round(nextDelay)}ms`);
+      }
+
+      registerAnimatedElement(element);
+    });
+  };
+
+  const animationSpecs = [
+    {
+      selector: '.hero .hero-panel, .hero .hero-content > div',
+      animation: 'fade-up',
+      options: { stagger: 120 },
+    },
+    {
+      selector: '.hero .hero-actions .btn, .hero .hero-highlight .btn',
+      animation: 'fade-up',
+      options: { stagger: 80, delay: 160 },
+    },
+    {
+      selector: '.section > h2',
+      animation: 'fade-up',
+      options: { delay: 80 },
+    },
+    {
+      selector: '.section > .subtitle, .section > p.subtitle',
+      animation: 'fade-up',
+      options: { delay: 160 },
+    },
+    {
+      selector: '.section .card',
+      animation: 'zoom-in',
+      options: { stagger: 100 },
+    },
+    {
+      selector: '.section .grid > *:not(.card)',
+      animation: 'fade-up',
+      options: { stagger: 100 },
+    },
+    {
+      selector: '.testimonial',
+      animation: 'fade-up',
+      options: { stagger: 120 },
+    },
+    {
+      selector: '.trust-badge',
+      animation: 'fade-up',
+      options: { stagger: 80 },
+    },
+    {
+      selector: '.faq-item',
+      animation: 'fade-up',
+      options: { stagger: 80 },
+    },
+    {
+      selector: '.info-item',
+      animation: 'fade-up',
+      options: { stagger: 90 },
+    },
+    {
+      selector: '.gallery-grid > *',
+      animation: 'zoom-in',
+      options: { stagger: 80 },
+    },
+    {
+      selector: '.footer-content > div, .footer-bottom',
+      animation: 'fade-up',
+      options: { stagger: 120 },
+    },
+    {
+      selector: '.list li',
+      animation: 'fade-up',
+      options: { stagger: 36 },
+    },
+  ];
+
+  animationSpecs.forEach((spec) => {
+    assignAnimationToElements(spec.selector, spec.animation, spec.options);
+  });
+
+  document.querySelectorAll('[data-animate]').forEach((element) => {
+    registerAnimatedElement(element);
+  });
 
   const backToTop = document.createElement('button');
   backToTop.type = 'button';
