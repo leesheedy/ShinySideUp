@@ -66,102 +66,342 @@
     </header>
 
     <main>
-      <section class="hero" style="padding-bottom: 3rem;">
+      <section class="hero hero--booking">
         <div class="hero-content">
           <div>
-            <h1>Secure Your Cleaning Slot</h1>
+            <h1>Book your clean without the back-and-forth</h1>
             <p>
-              Fill in the form below to request your preferred day and time. Our scheduling team will confirm within one business day.
+              Answer a few quick questions, pick your preferred day, and we’ll confirm the details within one business day. If you need a hand, our team is just a phone call away.
             </p>
             <div class="hero-highlight">
-              <a class="btn" href="#booking-form">Start Booking</a>
+              <a class="btn" href="#booking-form">Start your booking</a>
               <a class="btn secondary" href="tel:1300555010">Need Help? Call Us</a>
             </div>
+            <ul class="hero-checklist" role="list">
+              <li>Instantly tell us what spaces need attention</li>
+              <li>Flag add-ons like oven or window cleaning</li>
+              <li>Choose the best time for our crew to arrive</li>
+            </ul>
           </div>
           <div class="hero-img">
-            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80" alt="Cleaner making a bed with crisp white sheets" />
+            <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80" alt="Shiny Side Up cleaner preparing supplies" />
+          </div>
+        </div>
+      </section>
+
+      <section class="section booking-intro">
+        <div class="booking-intro__grid">
+          <div class="booking-intro__step">
+            <span class="booking-intro__number">1</span>
+            <h3>Tell us the clean you need</h3>
+            <p>Pick from our most popular services including home maintenance, deep cleans, and end-of-lease packages.</p>
+          </div>
+          <div class="booking-intro__step">
+            <span class="booking-intro__number">2</span>
+            <h3>Give property details</h3>
+            <p>We’ll ask how many bedrooms or the approximate size so we can tailor the checklist and quote.</p>
+          </div>
+          <div class="booking-intro__step">
+            <span class="booking-intro__number">3</span>
+            <h3>Lock in your time</h3>
+            <p>Select a date that suits you, add any access info, and we’ll do the rest.</p>
           </div>
         </div>
       </section>
 
       <section class="section" id="booking-form">
-        <div class="grid" style="max-width: 960px; margin: 0 auto;">
+        <div class="grid booking-grid">
           <div>
-            <h2>Booking Details</h2>
-            <p class="subtitle">We create a bespoke quote based on the size of your space and the services required.</p>
-            <form data-form data-success-message="Thank you! Your booking request has been sent.">
-              <div class="form-row two">
-                <label>
-                  <span>Full Name</span>
-                  <input type="text" name="fullName" required aria-label="Full name" />
-                </label>
-                <label>
-                  <span>Phone Number</span>
-                  <input type="tel" name="phone" required aria-label="Phone number" />
-                </label>
+            <h2>Let's customise your booking</h2>
+            <p class="subtitle">The smarter we are about your space today, the smoother your clean will be.</p>
+            <form
+              data-form
+              data-booking-form
+              data-success-message="Thank you! Your booking request has been sent. We’ll be in touch shortly to confirm."
+              novalidate
+            >
+              <div class="stepper" data-stepper>
+                <div class="stepper-step is-active" data-stepper-item>
+                  <span class="stepper-step__number">1</span>
+                  <span class="stepper-step__label">Service</span>
+                </div>
+                <div class="stepper-step" data-stepper-item>
+                  <span class="stepper-step__number">2</span>
+                  <span class="stepper-step__label">Property</span>
+                </div>
+                <div class="stepper-step" data-stepper-item>
+                  <span class="stepper-step__number">3</span>
+                  <span class="stepper-step__label">Schedule</span>
+                </div>
               </div>
-              <div class="form-row two">
+
+              <fieldset class="form-step is-active" data-step="service">
+                <legend>Choose your clean</legend>
+                <p class="form-step__description">Select the option that best matches what you’re booking in today.</p>
+                <div class="option-grid" role="radiogroup" aria-label="Select your cleaning service">
+                  <label class="option-card">
+                    <input type="radio" name="serviceType" value="home_maintenance" required data-service-option data-step-summary="service" />
+                    <span class="option-card__content">
+                      <strong>Home maintenance clean</strong>
+                      <span>Weekly or fortnightly upkeep for lived-in homes.</span>
+                    </span>
+                  </label>
+                  <label class="option-card">
+                    <input type="radio" name="serviceType" value="deep_clean" data-service-option data-step-summary="service" />
+                    <span class="option-card__content">
+                      <strong>Seasonal deep clean</strong>
+                      <span>Detailed top-to-bottom reset including skirting, blinds, and more.</span>
+                    </span>
+                  </label>
+                  <label class="option-card">
+                    <input type="radio" name="serviceType" value="end_of_lease" data-service-option data-step-summary="service" />
+                    <span class="option-card__content">
+                      <strong>End-of-lease / bond</strong>
+                      <span>Agent-ready sparkle to help secure your full bond return.</span>
+                    </span>
+                  </label>
+                  <label class="option-card">
+                    <input type="radio" name="serviceType" value="commercial" data-service-option data-step-summary="service" />
+                    <span class="option-card__content">
+                      <strong>Office &amp; commercial</strong>
+                      <span>For workplaces, retail, medical, and shared facilities.</span>
+                    </span>
+                  </label>
+                  <label class="option-card">
+                    <input type="radio" name="serviceType" value="builders" data-service-option data-step-summary="service" />
+                    <span class="option-card__content">
+                      <strong>Post-construction</strong>
+                      <span>Dust and debris removal after renovations or builds.</span>
+                    </span>
+                  </label>
+                  <label class="option-card">
+                    <input type="radio" name="serviceType" value="custom" data-service-option data-step-summary="service" />
+                    <span class="option-card__content">
+                      <strong>Something else</strong>
+                      <span>Tell us what you need and we’ll create a tailored scope.</span>
+                    </span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset class="form-step" data-step="property">
+                <legend>Property details</legend>
+                <p class="form-step__description" data-property-description>Help us estimate the crew and time required.</p>
+                <div class="form-row two">
+                  <label>
+                    <span>Location / suburb</span>
+                    <input type="text" name="location" required aria-label="Location or suburb" placeholder="e.g. Wodonga, Albury, Thurgoona" />
+                  </label>
+                  <label>
+                    <span>Property access</span>
+                    <select name="access" aria-label="Property access">
+                      <option value="ground">Ground level</option>
+                      <option value="stairs">Upper level / stairs</option>
+                      <option value="lift">Lift access</option>
+                      <option value="key_safe">Key safe / agent pickup</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="form-row two" data-bedroom-group hidden>
+                  <label>
+                    <span>How many bedrooms?</span>
+                    <select name="bedrooms" aria-label="Number of bedrooms" data-step-summary="bedrooms">
+                      <option value="1">1 bedroom</option>
+                      <option value="2">2 bedrooms</option>
+                      <option value="3">3 bedrooms</option>
+                      <option value="4">4 bedrooms</option>
+                      <option value="5">5+ bedrooms</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>How many bathrooms?</span>
+                    <select name="bathrooms" aria-label="Number of bathrooms" data-step-summary="bathrooms">
+                      <option value="1">1 bathroom</option>
+                      <option value="2">2 bathrooms</option>
+                      <option value="3">3 bathrooms</option>
+                      <option value="4">4+ bathrooms</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="form-row two" data-floorarea-group hidden>
+                  <label>
+                    <span>Approximate size</span>
+                    <select name="floorArea" aria-label="Approximate property size" data-step-summary="floorArea">
+                      <option value="under_150">Under 150 sqm</option>
+                      <option value="150_300">150–300 sqm</option>
+                      <option value="300_500">300–500 sqm</option>
+                      <option value="500_plus">500+ sqm</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Cleaning frequency</span>
+                  <select name="frequency" aria-label="Cleaning frequency">
+                      <option value="one_off">One-off</option>
+                      <option value="weekly">Weekly</option>
+                      <option value="fortnightly">Fortnightly</option>
+                      <option value="monthly">Monthly</option>
+                    </select>
+                  </label>
+                </div>
+                <fieldset class="extras" data-extras-group>
+                  <legend>Popular add-ons</legend>
+                  <p class="extras__hint">Select any extras you’d like included in your quote.</p>
+                  <div class="extras__grid">
+                    <label class="chip">
+                      <input type="checkbox" name="extras" value="oven" data-step-summary="extras" />
+                      <span>Oven detail</span>
+                    </label>
+                    <label class="chip">
+                      <input type="checkbox" name="extras" value="windows" data-step-summary="extras" />
+                      <span>Internal windows</span>
+                    </label>
+                    <label class="chip">
+                      <input type="checkbox" name="extras" value="carpets" data-step-summary="extras" />
+                      <span>Carpet steam</span>
+                    </label>
+                    <label class="chip">
+                      <input type="checkbox" name="extras" value="fridge" data-step-summary="extras" />
+                      <span>Fridge clean</span>
+                    </label>
+                    <label class="chip">
+                      <input type="checkbox" name="extras" value="laundry" data-step-summary="extras" />
+                      <span>Laundry refresh</span>
+                    </label>
+                    <label class="chip">
+                      <input type="checkbox" name="extras" value="balcony" data-step-summary="extras" />
+                      <span>Balcony / outdoor area</span>
+                    </label>
+                  </div>
+                </fieldset>
                 <label>
-                  <span>Email Address</span>
-                  <input type="email" name="email" required aria-label="Email address" />
+                  <span>Anything special we should know?</span>
+                  <textarea name="notes" rows="4" aria-label="Additional information" placeholder="Access instructions, parking info, pets on site, or surfaces that need extra care."></textarea>
                 </label>
-                <label>
-                  <span>Type of Clean</span>
-                  <select name="cleanType" required aria-label="Type of clean">
-                    <option value="" disabled selected>Select</option>
-                    <option>Residential - Maintenance</option>
-                    <option>Residential - Deep Clean</option>
-                    <option>Commercial</option>
-                    <option>End of Lease</option>
-                    <option>Construction / Builder Clean</option>
-                    <option>Other</option>
-                  </select>
+              </fieldset>
+
+              <fieldset class="form-step" data-step="schedule">
+                <legend>Schedule &amp; contact</legend>
+                <p class="form-step__description">We’ll lock in your clean or reach out with the closest available times.</p>
+                <div class="form-row two">
+                  <label>
+                    <span>Preferred date</span>
+                    <input type="date" name="preferredDate" required aria-label="Preferred date" data-step-summary="date" />
+                  </label>
+                  <label>
+                    <span>Preferred time</span>
+                    <select name="preferredTime" aria-label="Preferred time" data-step-summary="time">
+                      <option value="any">Any time</option>
+                      <option value="morning">Morning (8am–11am)</option>
+                      <option value="midday">Midday (11am–2pm)</option>
+                      <option value="afternoon">Afternoon (2pm–5pm)</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="form-row two">
+                  <label>
+                    <span>Full name</span>
+                    <input type="text" name="fullName" required aria-label="Full name" data-step-summary="name" />
+                  </label>
+                  <label>
+                    <span>Best contact number</span>
+                    <input type="tel" name="phone" required aria-label="Phone number" data-step-summary="phone" />
+                  </label>
+                </div>
+                <div class="form-row two">
+                  <label>
+                    <span>Email address</span>
+                    <input type="email" name="email" required aria-label="Email address" data-step-summary="email" />
+                  </label>
+                  <label>
+                    <span>How should we confirm?</span>
+                    <select name="contactPreference" aria-label="Preferred contact method" data-step-summary="contact">
+                      <option value="phone">Phone call</option>
+                      <option value="sms">SMS</option>
+                      <option value="email">Email</option>
+                    </select>
+                  </label>
+                </div>
+                <label class="checkbox-inline">
+                  <input type="checkbox" name="subscribe" value="updates" />
+                  <span>Keep me posted about special offers and seasonal availability.</span>
                 </label>
+              </fieldset>
+
+              <div class="form-navigation">
+                <button class="btn secondary" type="button" data-prev disabled>Back</button>
+                <button class="btn" type="button" data-next>Next step</button>
+                <button class="btn" type="submit" data-submit hidden>Submit booking request</button>
               </div>
-              <div class="form-row two">
-                <label>
-                  <span>Location / Suburb</span>
-                  <input type="text" name="location" required aria-label="Location" placeholder="e.g. Wodonga, Albury, Thurgoona" />
-                </label>
-                <label>
-                  <span>Property Size</span>
-                  <select name="propertySize" aria-label="Property size">
-                    <option>1 bedroom</option>
-                    <option>2 bedrooms</option>
-                    <option>3 bedrooms</option>
-                    <option>4+ bedrooms</option>
-                    <option>Office under 200sqm</option>
-                    <option>Office 200-500sqm</option>
-                    <option>Large commercial space</option>
-                  </select>
-                </label>
-              </div>
-              <div class="form-row two">
-                <label>
-                  <span>Preferred Date</span>
-                  <input type="date" name="preferredDate" required aria-label="Preferred date" />
-                </label>
-                <label>
-                  <span>Preferred Time</span>
-                  <input type="time" name="preferredTime" aria-label="Preferred time" />
-                </label>
-              </div>
-              <label>
-                <span>Additional Comments</span>
-                <textarea name="comments" aria-label="Additional comments" placeholder="Access instructions, parking info, or special requests."></textarea>
-              </label>
-              <button class="btn" type="submit">Submit Booking Request</button>
+              <p class="form-disclaimer">By submitting, you’re not locked into anything — we’ll confirm availability and pricing first.</p>
               <div class="alert" role="status" aria-live="polite"></div>
             </form>
           </div>
-          <div class="card" style="background: linear-gradient(135deg, rgba(31, 122, 196, 0.08), rgba(52, 177, 235, 0.18));">
-            <h3>What Happens Next?</h3>
-            <ol style="text-align: left; padding-left: 1.25rem; color: #2e3c4c;">
-              <li>We call to confirm your booking and tailor the checklist.</li>
-              <li>You receive a written quote and service agreement.</li>
-              <li>Our team arrives on time with all equipment supplied.</li>
-            </ol>
-            <p style="margin-top: 1.25rem;">Need something sooner? Call <a href="tel:1300555010">1300 555 010</a> and ask for our rapid-response team.</p>
+          <aside class="card booking-summary" data-booking-summary>
+            <h3>Your booking snapshot</h3>
+            <p class="booking-summary__hint">We’ll keep this updated as you move through the steps.</p>
+            <dl>
+              <div>
+                <dt>Service</dt>
+                <dd data-summary-value="service">Select a service to begin.</dd>
+              </div>
+              <div>
+                <dt>Bedrooms</dt>
+                <dd data-summary-value="bedrooms">Add bedroom count</dd>
+              </div>
+              <div>
+                <dt>Bathrooms</dt>
+                <dd data-summary-value="bathrooms">Add bathroom count</dd>
+              </div>
+              <div>
+                <dt>Floor area</dt>
+                <dd data-summary-value="floorArea">Optional</dd>
+              </div>
+              <div>
+                <dt>Extras</dt>
+                <dd data-summary-value="extras">None selected</dd>
+              </div>
+              <div>
+                <dt>Preferred date</dt>
+                <dd data-summary-value="date">Pick a date</dd>
+              </div>
+              <div>
+                <dt>Preferred time</dt>
+                <dd data-summary-value="time">Any time</dd>
+              </div>
+              <div>
+                <dt>Contact preference</dt>
+                <dd data-summary-value="contact">Phone or email</dd>
+              </div>
+              <div>
+                <dt>Contact details</dt>
+                <dd data-summary-value="contactDetails">Add your name &amp; number</dd>
+              </div>
+            </dl>
+            <div class="booking-summary__help">
+              <strong>Need urgent help?</strong>
+              <p>Call <a href="tel:1300555010">1300 555 010</a> and mention you’re booking online for priority assistance.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section light" style="text-align: center;">
+        <h2>What to expect once you hit submit</h2>
+        <div class="process-grid">
+          <div class="process-card">
+            <span class="process-card__icon">📅</span>
+            <h3>Fast confirmation</h3>
+            <p>Our scheduling team will call or email (your choice) within one business day to confirm timing.</p>
+          </div>
+          <div class="process-card">
+            <span class="process-card__icon">🧽</span>
+            <h3>Tailored checklist</h3>
+            <p>We match the crew and add-ons to your property so nothing is missed on the day.</p>
+          </div>
+          <div class="process-card">
+            <span class="process-card__icon">✅</span>
+            <h3>No surprises</h3>
+            <p>You’ll receive a written quote and arrival window ahead of time. Approve it and we’re locked in.</p>
           </div>
         </div>
       </section>
