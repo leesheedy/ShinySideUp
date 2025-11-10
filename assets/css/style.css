@@ -229,15 +229,76 @@ body.nav-open .nav-overlay {
   flex-wrap: wrap;
 }
 
-.nav-links a {
+.nav-links .nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav-links > .nav-item > .nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   padding: 0.35rem 0.25rem;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
 }
 
-.nav-links a:hover,
-.nav-links a:focus {
+.nav-links > .nav-item > .nav-link:hover,
+.nav-links > .nav-item > .nav-link:focus {
   border-color: var(--primary-color);
+}
+
+.nav-dropdown > .nav-link::after {
+  content: '▾';
+  font-size: 0.75em;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.nav-dropdown .dropdown-panel {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  left: 0;
+  min-width: 200px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 26px 48px rgba(15, 65, 110, 0.16);
+  padding: 0.5rem 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 1020;
+}
+
+.nav-dropdown .dropdown-panel a {
+  display: block;
+  padding: 0.6rem 1.25rem;
+  color: var(--dark-color);
+  font-weight: 500;
+  transition: color 0.2s ease, background 0.2s ease;
+  border-bottom: none;
+}
+
+.nav-dropdown .dropdown-panel a:hover,
+.nav-dropdown .dropdown-panel a:focus {
+  background: rgba(31, 122, 196, 0.08);
+  color: var(--primary-color);
+}
+
+.nav-dropdown:hover > .nav-link::after,
+.nav-dropdown:focus-within > .nav-link::after {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown:hover .dropdown-panel,
+.nav-dropdown:focus-within .dropdown-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .header-actions {
@@ -1051,9 +1112,35 @@ textarea {
     gap: 0.75rem;
   }
 
-  .nav-links a {
+  .nav-links .nav-item {
+    width: 100%;
+  }
+
+  .nav-links > .nav-item > .nav-link {
     width: 100%;
     padding: 0.5rem 0;
+    border-bottom: none;
+  }
+
+  .nav-dropdown > .nav-link::after {
+    margin-left: auto;
+  }
+
+  .nav-dropdown .dropdown-panel {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+    box-shadow: none;
+    padding: 0.25rem 0 0.75rem;
+    border-radius: 0;
+    width: 100%;
+  }
+
+  .nav-dropdown .dropdown-panel a {
+    padding: 0.35rem 0 0.35rem 1rem;
+    border-radius: 10px;
   }
 
   .header-actions {
