@@ -161,16 +161,36 @@ header {
   position: relative;
   background: linear-gradient(120deg, rgba(31, 122, 196, 0.12), rgba(52, 177, 235, 0.18));
   overflow: hidden;
+  padding: 1.5rem;
 }
 
 .hero-content {
+  position: relative;
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2.5rem;
-  padding: 6rem 1.5rem 5rem;
+  padding: clamp(3rem, 6vw, 5rem);
   align-items: center;
+  border-radius: 32px;
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0.92)
+    ),
+    url('https://i.imgur.com/6zTgPPs.png');
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 30px 60px rgba(12, 70, 120, 0.18);
+  overflow: hidden;
+}
+
+.hero-copy {
+  max-width: 560px;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  background-color: rgba(255, 255, 255, 0.82);
+  border-radius: 24px;
+  box-shadow: 0 20px 45px rgba(15, 70, 110, 0.16);
+  backdrop-filter: blur(4px);
 }
 
 .hero h1 {
@@ -192,15 +212,7 @@ header {
   margin-top: 1.5rem;
 }
 
-.hero-img {
-  position: relative;
-}
 
-.hero-img img {
-  width: 100%;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-}
 
 .section {
   padding: 5rem 1.5rem;
