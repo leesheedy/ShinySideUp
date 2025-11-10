@@ -449,6 +449,87 @@ body.nav-open .nav-overlay {
   color: rgba(255, 255, 255, 0.92);
 }
 
+.shiny-highlight {
+  position: relative;
+  display: inline-block;
+  padding: 0 0.2em;
+  border-radius: 0.25em;
+  overflow: hidden;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
+  isolation: isolate;
+}
+
+.shiny-highlight::before,
+.shiny-highlight::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.shiny-highlight::before {
+  left: -120%;
+  width: 140%;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0) 10%,
+    rgba(255, 255, 255, 0.1) 35%,
+    rgba(255, 255, 255, 0.75) 50%,
+    rgba(255, 255, 255, 0.1) 65%,
+    rgba(255, 255, 255, 0) 90%
+  );
+  mix-blend-mode: screen;
+  transform: translateX(0) rotate(10deg);
+  animation: shine-wipe 3.75s ease-in-out infinite;
+}
+
+.shiny-highlight::after {
+  width: 1.75em;
+  left: -20%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%);
+  transform: translateX(0) scale(0.6);
+  filter: blur(0.5px);
+  opacity: 0;
+  animation: shine-sparkle 3.75s ease-in-out infinite;
+}
+
+@keyframes shine-wipe {
+  0% {
+    transform: translateX(-120%) rotate(10deg);
+  }
+  55% {
+    transform: translateX(120%) rotate(10deg);
+  }
+  100% {
+    transform: translateX(120%) rotate(10deg);
+  }
+}
+
+@keyframes shine-sparkle {
+  0%,
+  35% {
+    opacity: 0;
+    transform: translateX(-120%) scale(0.6);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateX(60%) scale(1);
+  }
+  65%,
+  100% {
+    opacity: 0;
+    transform: translateX(140%) scale(1.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shiny-highlight::before,
+  .shiny-highlight::after {
+    animation: none;
+  }
+}
+
 .section.cta .subtitle {
   color: rgba(255, 255, 255, 0.8);
 }
