@@ -38,18 +38,18 @@ header {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 1px 12px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+  border-bottom: 1px solid rgba(26, 42, 58, 0.08);
 }
 
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0.75rem 1.5rem;
+  padding: 0.65rem 1.5rem;
 }
 
 .logo {
@@ -72,6 +72,7 @@ header {
   align-items: center;
   gap: 1.25rem;
   font-weight: 500;
+  flex-wrap: wrap;
 }
 
 .nav-links a {
@@ -85,40 +86,39 @@ header {
   border-color: var(--primary-color);
 }
 
-.nav-cta {
+.header-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+  margin-left: auto;
 }
 
-.nav-social {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.nav-social a {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
+.header-phone {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(31, 122, 196, 0.1);
-  color: var(--primary-color);
+  padding: 0.55rem 1.15rem;
+  border-radius: 999px;
+  background: rgba(31, 122, 196, 0.08);
+  color: var(--dark-color);
   font-weight: 600;
-  font-size: 0.85rem;
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-.nav-social a:hover,
-.nav-social a:focus {
-  background-color: var(--primary-color);
+.header-phone:hover,
+.header-phone:focus {
+  background: var(--primary-color);
   color: #fff;
 }
 
-.nav-phone {
-  color: var(--dark-color);
-  font-weight: 600;
+.header-actions .btn {
+  width: auto;
+}
+
+.btn-small {
+  padding: 0.6rem 1.4rem;
+  font-size: 0.95rem;
+  box-shadow: 0 10px 20px rgba(31, 122, 196, 0.16);
 }
 
 .btn {
@@ -553,18 +553,23 @@ textarea {
 }
 
 @media (max-width: 960px) {
-  .nav-links {
-    display: none;
-  }
-
   .navbar {
     flex-wrap: wrap;
-    gap: 1rem;
+    justify-content: center;
+    gap: 0.75rem 1.25rem;
   }
 
-  .nav-cta {
+  .nav-links {
+    justify-content: center;
     width: 100%;
-    justify-content: space-between;
+    gap: 0.75rem 1.25rem;
+  }
+
+  .header-actions {
+    margin-left: 0;
+    order: 3;
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -580,6 +585,20 @@ textarea {
   .hero-highlight {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .header-phone {
+    width: 100%;
+  }
+
+  .header-actions .btn {
+    width: 100%;
   }
 
   .footer-content {
