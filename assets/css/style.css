@@ -1076,6 +1076,8 @@ textarea {
   .nav-toggle {
     display: inline-flex;
     margin-left: auto;
+    position: relative;
+    z-index: 1400;
   }
 
   .nav-overlay {
@@ -1083,37 +1085,52 @@ textarea {
   }
 
   .nav-group {
-    position: absolute;
-    top: calc(100% + 0.65rem);
-    left: 1rem;
-    right: 1rem;
-    margin: 0 auto;
-    width: min(100%, 420px);
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    margin: 0;
+    width: min(92vw, 360px);
     background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 32px 60px rgba(16, 50, 90, 0.24);
-    padding: 1.5rem 1.75rem;
-    display: grid;
-    gap: 1.5rem;
+    border-radius: 0;
+    box-shadow: -10px 0 40px rgba(16, 50, 90, 0.22);
+    padding: 5.5rem 1.75rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.75rem;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-10px);
+    transform: translateX(105%);
     pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    z-index: 1002;
-    max-height: calc(100vh - 90px);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    z-index: 1300;
+    height: 100vh;
     overflow-y: auto;
   }
 
   .nav-group.is-open {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    transform: translateX(0);
     pointer-events: auto;
   }
 
   .nav-group .header-actions {
-    display: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: auto;
+  }
+
+  .nav-group .header-actions .header-phone {
+    justify-content: center;
+    padding-left: 0;
+  }
+
+  .nav-group .header-actions .btn {
+    width: 100%;
   }
 
   .nav-links {
@@ -1620,5 +1637,21 @@ textarea {
 
   .hero-checklist {
     font-size: 0.9rem;
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+
+  form {
+    width: 100%;
+  }
+
+  .form-row {
+    gap: 1rem;
+  }
+
+  .form-row.two {
+    grid-template-columns: 1fr;
   }
 }
