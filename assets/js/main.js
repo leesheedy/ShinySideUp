@@ -15,6 +15,34 @@ ready(() => {
   const navToggle = document.querySelector('[data-nav-toggle]');
   const navGroup = document.querySelector('[data-nav-group]');
   const navOverlay = document.querySelector('[data-nav-overlay]');
+  const siteHeader = document.querySelector('.site-header');
+
+  if (siteHeader) {
+    const updateStickyState = (isStuck) => {
+      siteHeader.classList.toggle('is-stuck', isStuck);
+    };
+
+    if ('IntersectionObserver' in window) {
+      const sentinel = document.createElement('span');
+      sentinel.setAttribute('data-header-sentinel', '');
+      siteHeader.parentNode.insertBefore(sentinel, siteHeader);
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          updateStickyState(!entry.isIntersecting);
+        },
+        { rootMargin: '-1px 0px 0px 0px' }
+      );
+
+      observer.observe(sentinel);
+    } else {
+      const handleScroll = () => {
+        updateStickyState(window.scrollY > 4);
+      };
+      handleScroll();
+      window.addEventListener('scroll', handleScroll, { passive: true });
+    }
+  }
 
   if (navToggle && navGroup) {
     const FOCUSABLE_SELECTOR = 'a[href], button:not([tabindex="-1"])';
