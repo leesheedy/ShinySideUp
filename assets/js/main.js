@@ -12,6 +12,90 @@ ready(() => {
     yearEl.textContent = new Date().getFullYear();
   }
 
+  const navToggle = document.querySelector('[data-nav-toggle]');
+  const navGroup = document.querySelector('[data-nav-group]');
+  const navOverlay = document.querySelector('[data-nav-overlay]');
+
+  if (navToggle && navGroup) {
+    const FOCUSABLE_SELECTOR = 'a[href], button:not([tabindex="-1"])';
+
+    const openNav = () => {
+      navGroup.classList.add('is-open');
+      document.body.classList.add('nav-open');
+      navToggle.setAttribute('aria-expanded', 'true');
+      const firstLink = navGroup.querySelector('a');
+      if (firstLink) {
+        window.requestAnimationFrame(() => firstLink.focus());
+      }
+    };
+
+    const closeNav = () => {
+      navGroup.classList.remove('is-open');
+      document.body.classList.remove('nav-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    };
+
+    const toggleNav = () => {
+      if (navGroup.classList.contains('is-open')) {
+        closeNav();
+      } else {
+        openNav();
+      }
+    };
+
+    navToggle.addEventListener('click', toggleNav);
+
+    if (navOverlay) {
+      navOverlay.addEventListener('click', () => {
+        closeNav();
+        navToggle.focus();
+      });
+    }
+
+    navGroup.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        if (navGroup.classList.contains('is-open')) {
+          closeNav();
+          navToggle.focus();
+        }
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && navGroup.classList.contains('is-open')) {
+        closeNav();
+        navToggle.focus();
+        return;
+      }
+
+      if (event.key === 'Tab' && navGroup.classList.contains('is-open')) {
+        const focusable = Array.from(navGroup.querySelectorAll(FOCUSABLE_SELECTOR)).filter(
+          (el) => !el.hasAttribute('disabled')
+        );
+        if (!focusable.length) {
+          return;
+        }
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        } else if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        }
+      }
+    });
+
+    const handleResize = () => {
+      if (window.innerWidth > 960 && navGroup.classList.contains('is-open')) {
+        closeNav();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+  }
+
   const forms = document.querySelectorAll('[data-form]');
   forms.forEach((form) => {
     const alertEl = form.querySelector('.alert');
