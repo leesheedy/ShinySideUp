@@ -451,11 +451,14 @@ body.nav-open .nav-overlay {
 
 .shiny-highlight {
   position: relative;
-  display: inline-block;
-  padding: 0 0.2em;
-  border-radius: 0.25em;
-  overflow: hidden;
-  text-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
+  display: inline-flex;
+  align-items: center;
+  padding: 0.05em 0.4em;
+  border-radius: 999px;
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.015em;
+  text-shadow: 0 4px 12px rgba(12, 28, 44, 0.45);
   isolation: isolate;
 }
 
@@ -463,68 +466,46 @@ body.nav-open .nav-overlay {
 .shiny-highlight::after {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
+  inset: 0;
+  border-radius: inherit;
   pointer-events: none;
 }
 
 .shiny-highlight::before {
-  left: -120%;
-  width: 140%;
-  background: linear-gradient(
-    115deg,
-    rgba(255, 255, 255, 0) 10%,
-    rgba(255, 255, 255, 0.1) 35%,
-    rgba(255, 255, 255, 0.75) 50%,
-    rgba(255, 255, 255, 0.1) 65%,
-    rgba(255, 255, 255, 0) 90%
-  );
-  mix-blend-mode: screen;
-  transform: translateX(0) rotate(10deg);
-  animation: shine-wipe 3.75s ease-in-out infinite;
+  z-index: -2;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04) 45%, rgba(255, 255, 255, 0.32));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25), 0 12px 24px rgba(0, 0, 0, 0.18);
 }
 
 .shiny-highlight::after {
-  width: 1.75em;
-  left: -20%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%);
-  transform: translateX(0) scale(0.6);
-  filter: blur(0.5px);
+  z-index: -1;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0));
+  transform: translateX(-85%);
   opacity: 0;
-  animation: shine-sparkle 3.75s ease-in-out infinite;
+  animation: shiny-glint 4s ease-in-out infinite;
 }
 
-@keyframes shine-wipe {
-  0% {
-    transform: translateX(-120%) rotate(10deg);
-  }
-  55% {
-    transform: translateX(120%) rotate(10deg);
-  }
-  100% {
-    transform: translateX(120%) rotate(10deg);
-  }
-}
-
-@keyframes shine-sparkle {
+@keyframes shiny-glint {
   0%,
-  35% {
+  20% {
+    transform: translateX(-90%);
     opacity: 0;
-    transform: translateX(-120%) scale(0.6);
+  }
+  35% {
+    opacity: 0.7;
   }
   50% {
+    transform: translateX(90%);
     opacity: 0.9;
-    transform: translateX(60%) scale(1);
   }
   65%,
   100% {
+    transform: translateX(90%);
     opacity: 0;
-    transform: translateX(140%) scale(1.1);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .shiny-highlight::before,
   .shiny-highlight::after {
     animation: none;
   }
