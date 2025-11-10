@@ -24,6 +24,55 @@ body {
   line-height: 1.6;
 }
 
+html.js-enabled [data-animate] {
+  --animate-duration: 720ms;
+  --animate-delay: 0ms;
+  opacity: 0;
+  transform: translateY(32px);
+  filter: blur(10px);
+  will-change: opacity, transform, filter;
+  transition:
+    opacity var(--animate-duration) ease,
+    transform var(--animate-duration) cubic-bezier(0.18, 0.89, 0.32, 1.08),
+    filter var(--animate-duration) ease;
+  transition-delay: var(--animate-delay, 0ms);
+}
+
+html.js-enabled [data-animate].is-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+html.js-enabled [data-animate='fade-in'] {
+  transform: none;
+}
+
+html.js-enabled [data-animate='fade-up'] {
+  transform: translateY(32px);
+}
+
+html.js-enabled [data-animate='slide-left'] {
+  transform: translateX(40px);
+}
+
+html.js-enabled [data-animate='slide-right'] {
+  transform: translateX(-40px);
+}
+
+html.js-enabled [data-animate='zoom-in'] {
+  transform: translateY(20px) scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js-enabled [data-animate] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
 .back-to-top {
   position: fixed;
   right: 1.5rem;
