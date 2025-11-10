@@ -159,17 +159,28 @@ header {
 
 .hero {
   position: relative;
-  background-image: linear-gradient(
+  background-image:
+    linear-gradient(
+      to left,
+      rgba(0, 0, 0, 0) 55%,
+      rgba(0, 0, 0, 0.55) 85%,
+      rgba(0, 0, 0, 0.8) 100%
+    ),
+    linear-gradient(
       120deg,
       rgba(31, 122, 196, 0.28),
       rgba(52, 177, 235, 0.24)
     ),
     url('https://i.imgur.com/6zTgPPs.png');
   background-size: cover;
-  background-position: center;
+  background-position:
+    center,
+    center,
+    calc(50% + 30px) center;
   background-repeat: no-repeat;
   overflow: hidden;
   padding: 1.5rem;
+  color: #fff;
 }
 
 .hero-content {
@@ -180,32 +191,30 @@ header {
   gap: 2.5rem;
   padding: clamp(3rem, 6vw, 5rem);
   align-items: center;
-  border-radius: 32px;
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 30px 60px rgba(12, 70, 120, 0.18);
-  overflow: hidden;
-  backdrop-filter: blur(2px);
 }
 
 .hero-copy {
   max-width: 560px;
   padding: clamp(1.5rem, 4vw, 2.5rem);
-  background-color: rgba(255, 255, 255, 0.82);
-  border-radius: 24px;
-  box-shadow: 0 20px 45px rgba(15, 70, 110, 0.16);
-  backdrop-filter: blur(4px);
+}
+
+.hero-copy h1,
+.hero-copy p,
+.hero-copy li,
+.hero-copy a {
+  color: inherit;
 }
 
 .hero h1 {
   font-size: clamp(2.5rem, 4vw, 3.5rem);
   margin-bottom: 1rem;
-  color: var(--dark-color);
+  color: #fff;
 }
 
 .hero p {
   font-size: 1.1rem;
   margin-bottom: 1.5rem;
-  color: #4a5d6d;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .hero-highlight {
