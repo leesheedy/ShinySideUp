@@ -125,10 +125,360 @@ ready(() => {
   }
 
   const forms = document.querySelectorAll('[data-form]');
+
+  const setupBookingForm = (form) => {
+    const steps = Array.from(form.querySelectorAll('.form-step'));
+    if (!steps.length) {
+      return;
+    }
+
+    const stepperItems = Array.from(form.querySelectorAll('[data-stepper-item]'));
+    const nextBtn = form.querySelector('[data-next]');
+    const prevBtn = form.querySelector('[data-prev]');
+    const submitBtn = form.querySelector('[data-submit]');
+    const summaryRoot = form.closest('.booking-grid')?.querySelector('[data-booking-summary]') || null;
+    const summaryNodes = summaryRoot ? Array.from(summaryRoot.querySelectorAll('[data-summary-value]')) : [];
+    const summaryDefaults = summaryNodes.reduce((acc, node) => {
+      acc[node.dataset.summaryValue] = node.textContent.trim();
+      return acc;
+    }, {});
+    const summaryMap = summaryNodes.reduce((acc, node) => {
+      acc[node.dataset.summaryValue] = node;
+      return acc;
+    }, {});
+
+    const summaryFormatters = {
+      date: (value) => {
+        if (!value) return '';
+        const parsed = new Date(`${value}T00:00:00`);
+        if (Number.isNaN(parsed.getTime())) {
+          return value;
+        }
+        return parsed.toLocaleDateString('en-AU', {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'long',
+        });
+      },
+      time: (value) => {
+        const labels = {
+          any: 'Any time',
+          morning: 'Morning (8am–11am)',
+          midday: 'Midday (11am–2pm)',
+          afternoon: 'Afternoon (2pm–5pm)',
+        };
+        return labels[value] || value;
+      },
+      contact: (value) => {
+        const labels = {
+          phone: 'Phone call',
+          sms: 'SMS',
+          email: 'Email',
+        };
+        return labels[value] || value;
+      },
+    };
+
+    const setSummary = (key, value, input) => {
+      if (!summaryMap[key]) {
+        return;
+      }
+
+      let formatted = '';
+      if (Array.isArray(value)) {
+        formatted = value.length ? value.join(', ') : '';
+      } else if (value && summaryFormatters[key]) {
+        formatted = summaryFormatters[key](value, input);
+      } else if (value && input && input.tagName === 'SELECT') {
+        const option = input.options[input.selectedIndex];
+        formatted = option ? option.textContent.trim() : value;
+      } else if (value && input && input.type === 'radio') {
+        const label = input.closest('label');
+        const strong = label ? label.querySelector('strong') : null;
+        formatted = strong ? strong.textContent.trim() : value;
+      } else if (typeof value === 'string') {
+        formatted = value.trim();
+      }
+
+      const fallback = summaryDefaults[key] || '';
+      summaryMap[key].textContent = formatted || fallback;
+    };
+
+    const resetSummaries = () => {
+      Object.entries(summaryMap).forEach(([key, node]) => {
+        node.textContent = summaryDefaults[key] || '';
+      });
+    };
+
+    const extrasInputs = Array.from(form.querySelectorAll('input[name="extras"]'));
+    const updateExtrasSummary = () => {
+      const selected = extrasInputs
+        .filter((input) => input.checked)
+        .map((input) => {
+          const label = input.closest('label');
+          const span = label ? label.querySelector('span') : null;
+          return span ? span.textContent.trim() : input.value;
+        });
+      setSummary('extras', selected);
+    };
+
+    const contactFields = {
+      name: form.querySelector('input[name="fullName"]'),
+      phone: form.querySelector('input[name="phone"]'),
+      email: form.querySelector('input[name="email"]'),
+    };
+
+    const updateContactDetailsSummary = () => {
+      const pieces = [];
+      if (contactFields.name && contactFields.name.value.trim()) {
+        pieces.push(contactFields.name.value.trim());
+      }
+      if (contactFields.phone && contactFields.phone.value.trim()) {
+        pieces.push(contactFields.phone.value.trim());
+      }
+      if (contactFields.email && contactFields.email.value.trim()) {
+        pieces.push(contactFields.email.value.trim());
+      }
+      setSummary('contactDetails', pieces.join(' • '));
+    };
+
+    const propertyDescription = form.querySelector('[data-property-description]');
+    const bedroomGroup = form.querySelector('[data-bedroom-group]');
+    const floorAreaGroup = form.querySelector('[data-floorarea-group]');
+    const extrasGroup = form.querySelector('[data-extras-group]');
+    const extrasLegend = extrasGroup ? extrasGroup.querySelector('legend') : null;
+    const extrasHint = extrasGroup ? extrasGroup.querySelector('.extras__hint') : null;
+
+    const propertyDefaults = {
+      description: propertyDescription ? propertyDescription.textContent.trim() : '',
+      extrasLegend: extrasLegend ? extrasLegend.textContent.trim() : '',
+      extrasHint: extrasHint ? extrasHint.textContent.trim() : '',
+      showBedrooms: true,
+      showFloorArea: false,
+    };
+
+    const propertyConfig = {
+      home_maintenance: {
+        description: 'Let us know the bedrooms and bathrooms so we can match the right team size.',
+        extrasLegend: 'Popular add-ons',
+        extrasHint: 'Select the extras you’d like included in your quote (optional).',
+        showBedrooms: true,
+        showFloorArea: false,
+      },
+      deep_clean: {
+        description: 'Bedrooms and bathrooms help us plan the detail work for a full reset.',
+        extrasLegend: 'Deep clean favourites',
+        extrasHint: 'Choose the areas you want us to focus on during your deep clean.',
+        showBedrooms: true,
+        showFloorArea: false,
+      },
+      end_of_lease: {
+        description: 'We’ll follow your agent checklist — share the room count so nothing gets missed.',
+        extrasLegend: 'Bond clean add-ons',
+        extrasHint: 'Tick any extras you need for your handover (windows, oven, carpets, etc.).',
+        showBedrooms: true,
+        showFloorArea: false,
+      },
+      commercial: {
+        description: 'Tell us the approximate size or number of zones so we can tailor the crew and equipment.',
+        extrasLegend: 'Spaces to prioritise',
+        extrasHint: 'Optional: highlight areas like kitchens, meeting rooms, or high-traffic zones.',
+        showBedrooms: false,
+        showFloorArea: true,
+      },
+      builders: {
+        description: 'Share the size of the build and surfaces that need detail so we can schedule enough time.',
+        extrasLegend: 'Areas to detail',
+        extrasHint: 'Select zones that need special attention after construction dust.',
+        showBedrooms: false,
+        showFloorArea: true,
+      },
+      custom: {
+        description: 'Tell us a bit about the space so we can prepare an accurate checklist.',
+        extrasLegend: propertyDefaults.extrasLegend,
+        extrasHint: propertyDefaults.extrasHint,
+        showBedrooms: false,
+        showFloorArea: false,
+      },
+    };
+
+    const applyPropertyConfig = (value) => {
+      const config = propertyConfig[value] || propertyDefaults;
+      const hasSelection = Boolean(value && propertyConfig[value]);
+
+      if (propertyDescription) {
+        propertyDescription.textContent = config.description || propertyDefaults.description;
+      }
+
+      if (extrasLegend && config.extrasLegend) {
+        extrasLegend.textContent = config.extrasLegend;
+      }
+
+      if (extrasHint && config.extrasHint) {
+        extrasHint.textContent = config.extrasHint;
+      }
+
+      if (bedroomGroup) {
+        bedroomGroup.hidden = !config.showBedrooms;
+        bedroomGroup.setAttribute('aria-hidden', config.showBedrooms ? 'false' : 'true');
+        if (!config.showBedrooms) {
+          setSummary('bedrooms', hasSelection ? 'Not required' : '');
+          setSummary('bathrooms', hasSelection ? 'Not required' : '');
+        } else {
+          setSummary('bedrooms', '');
+          setSummary('bathrooms', '');
+        }
+      }
+
+      if (floorAreaGroup) {
+        floorAreaGroup.hidden = !config.showFloorArea;
+        floorAreaGroup.setAttribute('aria-hidden', config.showFloorArea ? 'false' : 'true');
+        if (!config.showFloorArea) {
+          setSummary('floorArea', hasSelection ? 'Not required' : '');
+        } else {
+          setSummary('floorArea', '');
+        }
+      }
+    };
+
+    const serviceOptions = Array.from(form.querySelectorAll('[data-service-option]'));
+    serviceOptions.forEach((option) => {
+      option.addEventListener('change', () => {
+        if (!option.checked) {
+          return;
+        }
+        const label = option.closest('label');
+        const labelText = label ? label.textContent.trim() : option.value;
+        setSummary('service', labelText, option);
+        applyPropertyConfig(option.value);
+      });
+    });
+
+    const summaryInputs = Array.from(form.querySelectorAll('[data-step-summary]'));
+    summaryInputs.forEach((input) => {
+      const handler = () => {
+        if (input.name === 'extras') {
+          updateExtrasSummary();
+          return;
+        }
+
+        if (input.name === 'fullName' || input.name === 'phone' || input.name === 'email') {
+          updateContactDetailsSummary();
+        }
+
+        setSummary(input.dataset.stepSummary, input.value, input);
+      };
+
+      const eventName = input.type === 'text' || input.type === 'tel' || input.type === 'email' ? 'input' : 'change';
+      input.addEventListener(eventName, handler);
+    });
+
+    extrasInputs.forEach((input) => {
+      input.addEventListener('change', updateExtrasSummary);
+    });
+
+    if (contactFields.name) {
+      contactFields.name.addEventListener('input', updateContactDetailsSummary);
+    }
+    if (contactFields.phone) {
+      contactFields.phone.addEventListener('input', updateContactDetailsSummary);
+    }
+    if (contactFields.email) {
+      contactFields.email.addEventListener('input', updateContactDetailsSummary);
+    }
+
+    let currentStepIndex = 0;
+
+    const updateStepState = () => {
+      steps.forEach((step, index) => {
+        step.classList.toggle('is-active', index === currentStepIndex);
+      });
+      stepperItems.forEach((item, index) => {
+        item.classList.toggle('is-active', index === currentStepIndex);
+      });
+
+      if (prevBtn) {
+        prevBtn.disabled = currentStepIndex === 0;
+      }
+
+      if (nextBtn) {
+        nextBtn.hidden = currentStepIndex === steps.length - 1;
+        nextBtn.textContent = currentStepIndex === steps.length - 2 ? 'Review details' : 'Next step';
+      }
+
+      if (submitBtn) {
+        submitBtn.hidden = currentStepIndex !== steps.length - 1;
+      }
+    };
+
+    const validateStep = () => {
+      const activeStep = steps[currentStepIndex];
+      if (!activeStep) {
+        return true;
+      }
+
+      const inputs = Array.from(activeStep.querySelectorAll('input, select, textarea')).filter((input) => {
+        if (input.closest('[hidden]')) {
+          return false;
+        }
+        return !input.disabled;
+      });
+
+      for (const input of inputs) {
+        if (!input.checkValidity()) {
+          input.reportValidity();
+          return false;
+        }
+      }
+
+      return true;
+    };
+
+    nextBtn?.addEventListener('click', () => {
+      if (!validateStep()) {
+        return;
+      }
+      currentStepIndex = Math.min(currentStepIndex + 1, steps.length - 1);
+      updateStepState();
+    });
+
+    prevBtn?.addEventListener('click', () => {
+      currentStepIndex = Math.max(currentStepIndex - 1, 0);
+      updateStepState();
+    });
+
+    form.addEventListener('reset', () => {
+      window.requestAnimationFrame(() => {
+        currentStepIndex = 0;
+        resetSummaries();
+        applyPropertyConfig('');
+        updateExtrasSummary();
+        updateContactDetailsSummary();
+        updateStepState();
+      });
+    });
+
+    applyPropertyConfig('');
+    resetSummaries();
+    updateExtrasSummary();
+    updateContactDetailsSummary();
+    updateStepState();
+  };
+
   forms.forEach((form) => {
     const alertEl = form.querySelector('.alert');
+    const isBookingForm = form.hasAttribute('data-booking-form');
+
+    if (isBookingForm) {
+      setupBookingForm(form);
+    }
+
     form.addEventListener('submit', (event) => {
       event.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
       if (alertEl) {
         alertEl.textContent = form.dataset.successMessage || 'Thanks! We\'ll be in touch shortly.';
         alertEl.classList.remove('error');
