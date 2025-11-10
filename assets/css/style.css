@@ -129,6 +129,17 @@ a:focus {
   margin-left: auto;
 }
 
+@media (min-width: 961px) {
+  .navbar {
+    justify-content: flex-start;
+  }
+
+  .nav-group {
+    flex: 1;
+    margin-left: 2rem;
+  }
+}
+
 .nav-toggle {
   border: none;
   background: none;
