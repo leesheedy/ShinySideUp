@@ -26,6 +26,39 @@ ready(() => {
     });
   });
 
+  const params = new URLSearchParams(window.location.search);
+  const serviceParam = params.get('service');
+  if (serviceParam) {
+    const contactSection = document.getElementById('contact-form');
+    if (contactSection) {
+      const normalized = serviceParam.toLowerCase().replace(/[^a-z]/g, '');
+      const serviceMap = {
+        residential: 'residential cleaning',
+        house: 'residential cleaning',
+        commercial: 'commercial cleaning',
+        office: 'commercial cleaning',
+        endoflease: 'end of lease',
+        endlease: 'end of lease',
+        bond: 'end of lease',
+      };
+
+      const desiredOption = serviceMap[normalized];
+      if (desiredOption) {
+        const select = contactSection.querySelector('select[name="service"]');
+        if (select) {
+          const match = Array.from(select.options).find(
+            (option) => option.textContent.trim().toLowerCase() === desiredOption
+          );
+          if (match) {
+            match.selected = true;
+            select.dispatchEvent(new Event('change'));
+            contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      }
+    }
+  }
+
   const track = document.querySelector('[data-testimonial-track]');
   if (track) {
     let index = 0;
