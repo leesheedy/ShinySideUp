@@ -173,6 +173,53 @@ header {
   align-items: center;
 }
 
+.hero-text {
+  position: relative;
+  padding: 2.5rem;
+  border-radius: 24px;
+  background-image: url('https://i.imgur.com/6zTgPPs.png');
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  box-shadow: 0 20px 45px rgba(15, 70, 110, 0.18);
+  isolation: isolate;
+}
+
+.hero-text::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(11, 33, 54, 0.65), rgba(31, 122, 196, 0.45));
+  z-index: -1;
+}
+
+.hero-text h1 {
+  color: #fff;
+}
+
+.hero-text p,
+.hero-text li,
+.hero-text strong {
+  color: #f0f6ff;
+}
+
+.hero-text ul.list span {
+  color: #fff;
+}
+
+.hero-text .hero-highlight .btn.secondary {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
+.hero-text .hero-highlight .btn.secondary:hover,
+.hero-text .hero-highlight .btn.secondary:focus {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.65);
+}
+
 .hero h1 {
   font-size: clamp(2.5rem, 4vw, 3.5rem);
   margin-bottom: 1rem;
