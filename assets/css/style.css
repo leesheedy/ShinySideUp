@@ -216,8 +216,8 @@ body.nav-open .nav-overlay {
 }
 
 .logo img {
-  width: clamp(60px, 6vw, 84px);
-  height: clamp(60px, 6vw, 84px);
+  width: clamp(72px, 7vw, 112px);
+  height: clamp(72px, 7vw, 112px);
   object-fit: contain;
 }
 
@@ -378,6 +378,8 @@ body.nav-open .nav-overlay {
 
 .hero {
   position: relative;
+  display: flex;
+  align-items: center;
   background-image:
     linear-gradient(
       to left,
@@ -395,16 +397,18 @@ body.nav-open .nav-overlay {
   background-position:
     center,
     center,
-    center;
+    center top;
   background-repeat: no-repeat;
   overflow: hidden;
   padding: 1.5rem;
   color: #fff;
+  min-height: clamp(420px, 54vw, 1040px);
 }
 
 .hero-content {
   position: relative;
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   display: grid;
   gap: 2.5rem;
@@ -497,13 +501,17 @@ body.nav-open .nav-overlay {
 
 .section.cta {
   position: relative;
-  padding: 5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(3rem, 6vw, 4.5rem) 1.5rem;
   background-image:
     linear-gradient(rgba(12, 28, 44, 0.7), rgba(12, 28, 44, 0.7)),
     url('https://i.imgur.com/6zTgPPs.png');
   background-size: cover;
-  background-position: center;
+  background-position: center top;
   color: #fff;
+  min-height: clamp(380px, 54vw, 1040px);
 }
 
 .section.cta h2,
@@ -583,6 +591,8 @@ body.nav-open .nav-overlay {
   padding: clamp(2.5rem, 6vw, 3.75rem);
   box-shadow: 0 24px 48px rgba(10, 25, 40, 0.45);
   backdrop-filter: blur(6px);
+  width: min(100%, 1100px);
+  margin: 0 auto;
 }
 
 .cta-panel {
