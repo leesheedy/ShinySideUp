@@ -191,11 +191,98 @@ header {
   gap: 2.5rem;
   padding: clamp(3rem, 6vw, 5rem);
   align-items: center;
+  justify-items: start;
 }
 
 .hero-copy {
-  max-width: 560px;
+  max-width: 620px;
   padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.hero-panel {
+  background: rgba(12, 28, 44, 0.82);
+  border-radius: 28px;
+  padding: clamp(2.25rem, 5vw, 3.25rem);
+  box-shadow: 0 30px 45px rgba(10, 25, 40, 0.35);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  gap: 1.75rem;
+  justify-items: start;
+  width: min(100%, 620px);
+}
+
+.hero-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0;
+}
+
+.hero-copy h1 {
+  margin: 0;
+  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+  line-height: 1.1;
+  color: #fff;
+}
+
+.hero-description {
+  margin: 0;
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.hero-checklist {
+  display: grid;
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.hero-checklist li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.85rem;
+  align-items: start;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero-checklist strong {
+  display: block;
+  color: #fff;
+  font-size: 0.98rem;
+  margin-bottom: 0.15rem;
+}
+
+.hero-checklist li > div span {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.check-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(65, 193, 120, 0.18);
+  color: #41c178;
+  font-size: 1.1rem;
+  font-weight: 700;
 }
 
 .hero-copy h1,
@@ -635,6 +722,15 @@ textarea {
 @media (max-width: 640px) {
   .hero-content {
     padding: 4.5rem 1.25rem 4rem;
+  }
+
+  .hero-panel {
+    padding: 2rem 1.75rem;
+    gap: 1.25rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
   }
 
   .btn {
