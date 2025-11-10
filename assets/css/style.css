@@ -159,7 +159,15 @@ header {
 
 .hero {
   position: relative;
-  background: linear-gradient(120deg, rgba(31, 122, 196, 0.12), rgba(52, 177, 235, 0.18));
+  background-image: linear-gradient(
+      120deg,
+      rgba(31, 122, 196, 0.28),
+      rgba(52, 177, 235, 0.24)
+    ),
+    url('https://i.imgur.com/6zTgPPs.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   overflow: hidden;
   padding: 1.5rem;
 }
@@ -173,16 +181,10 @@ header {
   padding: clamp(3rem, 6vw, 5rem);
   align-items: center;
   border-radius: 32px;
-  background-image: linear-gradient(
-      rgba(31, 122, 196, 0.15),
-      rgba(31, 122, 196, 0.15)
-    ),
-    url('https://i.imgur.com/6zTgPPs.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: rgba(255, 255, 255, 0.1);
   box-shadow: 0 30px 60px rgba(12, 70, 120, 0.18);
   overflow: hidden;
+  backdrop-filter: blur(2px);
 }
 
 .hero-copy {
