@@ -147,6 +147,18 @@ ready(() => {
       return acc;
     }, {});
 
+    form.__getBookingSnapshot = () =>
+      summaryNodes.map((node) => {
+        const key = node.dataset.summaryValue;
+        const label = node.previousElementSibling ? node.previousElementSibling.textContent.trim() : key;
+        return {
+          key,
+          label,
+          value: node.textContent.trim(),
+          defaultValue: summaryDefaults[key] || '',
+        };
+      });
+
     const summaryFormatters = {
       date: (value) => {
         if (!value) return '';
@@ -479,8 +491,87 @@ ready(() => {
         form.reportValidity();
         return;
       }
+      const snapshotEntries = typeof form.__getBookingSnapshot === 'function' ? form.__getBookingSnapshot() : [];
+      const escapeHtml = (value) =>
+        String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      const placeholderPattern = /(Add |Pick |Optional|Phone or email)/i;
+      const submittedAt = new Date().toLocaleString('en-AU', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+        timeZoneName: 'short',
+      });
+
+      let snapshotOpened = false;
+      if (snapshotEntries.length) {
+        const snapshotWindow = window.open('', '_blank', 'noopener');
+        if (snapshotWindow) {
+          const rows = snapshotEntries
+            .map((entry) => {
+              const displayValue =
+                !entry.value || (entry.value === entry.defaultValue && placeholderPattern.test(entry.defaultValue))
+                  ? '—'
+                  : entry.value;
+              return `
+                <tr>
+                  <th scope="row">${escapeHtml(entry.label)}</th>
+                  <td>${escapeHtml(displayValue)}</td>
+                </tr>`;
+            })
+            .join('');
+
+          const doc = snapshotWindow.document;
+          doc.open();
+          doc.write(`<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Shiny Side Up booking snapshot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root { font-family: 'Inter', 'Segoe UI', Roboto, sans-serif; color: #1a2a3a; }
+      body { margin: 0; background: linear-gradient(180deg, #f7fbff 0%, #ffffff 65%); padding: 2.5rem 1.5rem; }
+      .wrapper { max-width: 720px; margin: 0 auto; background: #ffffff; border-radius: 20px; box-shadow: 0 24px 48px rgba(26, 42, 58, 0.12); overflow: hidden; border: 1px solid rgba(31, 122, 196, 0.1); }
+      header { padding: 2.25rem 2.5rem 1.5rem; background: linear-gradient(135deg, rgba(31, 122, 196, 0.12), rgba(52, 177, 235, 0.18)); border-bottom: 1px solid rgba(31, 122, 196, 0.1); }
+      header h1 { margin: 0 0 0.35rem; font-size: clamp(1.75rem, 4vw, 2.4rem); }
+      header p { margin: 0; color: rgba(26, 42, 58, 0.72); font-size: 0.95rem; }
+      table { width: 100%; border-collapse: collapse; }
+      th { text-align: left; font-size: 0.9rem; font-weight: 600; padding: 1rem 2.5rem; background: rgba(247, 251, 255, 0.85); border-right: 1px solid rgba(31, 122, 196, 0.08); width: 35%; }
+      td { padding: 1rem 2.5rem; font-size: 0.95rem; }
+      tr + tr th, tr + tr td { border-top: 1px solid rgba(31, 122, 196, 0.08); }
+      @media (max-width: 640px) {
+        body { padding: 1.5rem 1rem; }
+        header, th, td { padding-left: 1.5rem; padding-right: 1.5rem; }
+        th { width: 45%; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Booking snapshot</h1>
+        <p>Submitted ${escapeHtml(submittedAt)}</p>
+      </header>
+      <table>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>`);
+          doc.close();
+          snapshotOpened = true;
+        }
+      }
       if (alertEl) {
-        alertEl.textContent = form.dataset.successMessage || 'Thanks! We\'ll be in touch shortly.';
+        alertEl.textContent = snapshotOpened
+          ? 'Thank you! A booking snapshot has opened in a new tab.'
+          : 'Thanks! Please allow pop-ups to view your booking snapshot.';
         alertEl.classList.remove('error');
         alertEl.classList.add('success');
       }
