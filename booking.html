@@ -130,6 +130,7 @@
               data-form
               data-booking-form
               data-success-message="Thank you! Your booking request has been sent. We’ll be in touch shortly to confirm."
+              data-success-target="booking-success-modal"
               novalidate
             >
               <div class="stepper" data-stepper>
@@ -360,6 +361,39 @@
               <p class="form-disclaimer">By submitting, you’re not locked into anything — we’ll confirm availability and pricing first.</p>
               <div class="alert" role="status" aria-live="polite"></div>
             </form>
+            <div
+              class="modal"
+              data-success-modal="booking-success-modal"
+              aria-hidden="true"
+            >
+              <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="booking-success-title">
+                <button
+                  type="button"
+                  class="modal__close"
+                  data-modal-close
+                  aria-label="Close success message"
+                >
+                  ×
+                </button>
+                <div class="modal__body">
+                  <h3 id="booking-success-title">Booking request sent!</h3>
+                  <p data-modal-message>
+                    Thank you! Your booking request has been sent. We’ll be in touch shortly to confirm the details.
+                  </p>
+                  <p data-snapshot-status="opened">
+                    We’ve opened a booking snapshot in a new tab so you can save or print the details.
+                  </p>
+                  <p data-snapshot-status="blocked" hidden>
+                    If you don’t see the booking snapshot, please allow pop-ups for this site and submit the form again.
+                  </p>
+                </div>
+                <div class="modal__actions">
+                  <button class="btn" type="button" data-modal-close data-modal-initial-focus>
+                    Back to form
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
           <aside class="card booking-summary" data-booking-summary>
             <h3>Your booking snapshot</h3>

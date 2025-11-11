@@ -126,6 +126,131 @@ ready(() => {
     window.addEventListener('resize', handleResize);
   }
 
+  const modalControllers = new Map();
+  const MODAL_FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+  const createModalController = (modal) => {
+    if (!(modal instanceof HTMLElement)) {
+      return null;
+    }
+
+    const closeButtons = Array.from(modal.querySelectorAll('[data-modal-close]'));
+    const messageEl = modal.querySelector('[data-modal-message]');
+    const snapshotOpenedEl = modal.querySelector('[data-snapshot-status="opened"]');
+    const snapshotBlockedEl = modal.querySelector('[data-snapshot-status="blocked"]');
+    let lastFocusedElement = null;
+
+    const setSnapshotStatus = (opened) => {
+      if (snapshotOpenedEl) {
+        snapshotOpenedEl.hidden = !opened;
+      }
+      if (snapshotBlockedEl) {
+        snapshotBlockedEl.hidden = opened;
+      }
+    };
+
+    const open = ({ message, snapshotOpened } = {}) => {
+      lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+      if (typeof message === 'string' && messageEl) {
+        messageEl.textContent = message;
+      }
+
+      const shouldShowOpened = typeof snapshotOpened === 'boolean' ? snapshotOpened : true;
+      setSnapshotStatus(shouldShowOpened);
+
+      modal.classList.add('is-visible');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+
+      const focusTarget =
+        modal.querySelector('[data-modal-initial-focus]') ||
+        modal.querySelector(MODAL_FOCUSABLE_SELECTOR);
+
+      if (focusTarget instanceof HTMLElement) {
+        window.requestAnimationFrame(() => focusTarget.focus());
+      }
+    };
+
+    const close = () => {
+      if (!modal.classList.contains('is-visible')) {
+        return;
+      }
+
+      modal.classList.remove('is-visible');
+      modal.setAttribute('aria-hidden', 'true');
+
+      if (!document.querySelector('.modal.is-visible')) {
+        document.body.classList.remove('modal-open');
+      }
+
+      if (lastFocusedElement && document.contains(lastFocusedElement)) {
+        lastFocusedElement.focus();
+      }
+    };
+
+    const handleKeydown = (event) => {
+      if (!modal.classList.contains('is-visible')) {
+        return;
+      }
+
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+        return;
+      }
+
+      if (event.key === 'Tab') {
+        const focusable = Array.from(
+          modal.querySelectorAll(MODAL_FOCUSABLE_SELECTOR)
+        ).filter((el) => !el.hasAttribute('disabled') && el.tabIndex !== -1);
+
+        if (!focusable.length) {
+          event.preventDefault();
+          return;
+        }
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    modal.addEventListener('keydown', handleKeydown);
+
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        close();
+      }
+    });
+
+    closeButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        close();
+      });
+    });
+
+    return {
+      open,
+      close,
+    };
+  };
+
+  document.querySelectorAll('[data-success-modal]').forEach((modal) => {
+    const key = modal.getAttribute('data-success-modal');
+    const controller = createModalController(modal);
+    if (key && controller) {
+      modalControllers.set(key, controller);
+    }
+  });
+
   const forms = document.querySelectorAll('[data-form]');
 
   const setupBookingForm = (form) => {
@@ -482,6 +607,8 @@ ready(() => {
   forms.forEach((form) => {
     const alertEl = form.querySelector('.alert');
     const isBookingForm = form.hasAttribute('data-booking-form');
+    const successTarget = form.getAttribute('data-success-target');
+    const successModalController = successTarget ? modalControllers.get(successTarget) : null;
 
     if (isBookingForm) {
       setupBookingForm(form);
@@ -502,15 +629,20 @@ ready(() => {
           .replace(/"/g, '&quot;')
           .replace(/'/g, '&#39;');
       const placeholderPattern = /(Add |Pick |Optional|Phone or email)/i;
-      const submittedAt = new Date().toLocaleString('en-AU', {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-        timeZoneName: 'short',
-      });
+      let submittedAt = '';
+      try {
+        submittedAt = new Date().toLocaleString('en-AU', {
+          dateStyle: 'medium',
+          timeStyle: 'short',
+          timeZoneName: 'short',
+        });
+      } catch (error) {
+        submittedAt = new Date().toLocaleString();
+      }
 
       let snapshotOpened = false;
       if (snapshotEntries.length) {
-        const snapshotWindow = window.open('', '_blank', 'noopener');
+        const snapshotWindow = window.open('', '_blank', 'noopener=yes');
         if (snapshotWindow) {
           const rows = snapshotEntries
             .map((entry) => {
@@ -570,13 +702,27 @@ ready(() => {
           snapshotOpened = true;
         }
       }
+      const baseMessage = form.dataset.successMessage || 'Thank you! Your message has been sent.';
+      let feedbackMessage = baseMessage;
+      if (snapshotEntries.length) {
+        feedbackMessage += snapshotOpened
+          ? ' A booking snapshot has opened in a new tab for your records.'
+          : ' Please allow pop-ups to view your booking snapshot.';
+      }
+
       if (alertEl) {
-        alertEl.textContent = snapshotOpened
-          ? 'Thank you! A booking snapshot has opened in a new tab.'
-          : 'Thanks! Please allow pop-ups to view your booking snapshot.';
+        alertEl.textContent = feedbackMessage;
         alertEl.classList.remove('error');
         alertEl.classList.add('success');
       }
+
+      if (successModalController) {
+        successModalController.open({
+          message: baseMessage,
+          snapshotOpened: snapshotEntries.length ? snapshotOpened : undefined,
+        });
+      }
+
       form.reset();
     });
   });
