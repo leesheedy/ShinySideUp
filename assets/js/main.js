@@ -253,6 +253,21 @@ ready(() => {
 
   const forms = document.querySelectorAll('[data-form]');
 
+  const EMAILJS_CONFIG = {
+    serviceId: 'service_template_website',
+    templateId: 'template_website',
+    publicKey: 'Of49R5dVYZ12Ur3tc',
+    fallbackEmail: 'info@shinysideup.au',
+  };
+
+  if (forms.length && window.emailjs?.init) {
+    try {
+      window.emailjs.init(EMAILJS_CONFIG.publicKey);
+    } catch (error) {
+      console.error('EmailJS initialisation failed:', error);
+    }
+  }
+
   const setupBookingForm = (form) => {
     const steps = Array.from(form.querySelectorAll('.form-step'));
     if (!steps.length) {
@@ -604,63 +619,43 @@ ready(() => {
     updateStepState();
   };
 
-  forms.forEach((form) => {
-    const alertEl = form.querySelector('.alert');
-    const isBookingForm = form.hasAttribute('data-booking-form');
-    const successTarget = form.getAttribute('data-success-target');
-    const successModalController = successTarget ? modalControllers.get(successTarget) : null;
+  const placeholderPattern = /(Add |Pick |Optional|Phone or email)/i;
 
-    if (isBookingForm) {
-      setupBookingForm(form);
+  const openSnapshotWindow = (snapshotEntries, submittedAt) => {
+    if (!snapshotEntries.length) {
+      return false;
     }
 
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-      }
-      const snapshotEntries = typeof form.__getBookingSnapshot === 'function' ? form.__getBookingSnapshot() : [];
-      const escapeHtml = (value) =>
-        String(value ?? '')
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#39;');
-      const placeholderPattern = /(Add |Pick |Optional|Phone or email)/i;
-      let submittedAt = '';
-      try {
-        submittedAt = new Date().toLocaleString('en-AU', {
-          dateStyle: 'medium',
-          timeStyle: 'short',
-          timeZoneName: 'short',
-        });
-      } catch (error) {
-        submittedAt = new Date().toLocaleString();
-      }
+    const escapeHtml = (value) =>
+      String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 
-      let snapshotOpened = false;
-      if (snapshotEntries.length) {
-        const snapshotWindow = window.open('', '_blank', 'noopener=yes');
-        if (snapshotWindow) {
-          const rows = snapshotEntries
-            .map((entry) => {
-              const displayValue =
-                !entry.value || (entry.value === entry.defaultValue && placeholderPattern.test(entry.defaultValue))
-                  ? '—'
-                  : entry.value;
-              return `
-                <tr>
-                  <th scope="row">${escapeHtml(entry.label)}</th>
-                  <td>${escapeHtml(displayValue)}</td>
-                </tr>`;
-            })
-            .join('');
+    const snapshotWindow = window.open('', '_blank', 'noopener=yes');
+    if (!snapshotWindow) {
+      return false;
+    }
 
-          const doc = snapshotWindow.document;
-          doc.open();
-          doc.write(`<!DOCTYPE html>
+    const rows = snapshotEntries
+      .map((entry) => {
+        const displayValue =
+          !entry.value || (entry.value === entry.defaultValue && placeholderPattern.test(entry.defaultValue))
+            ? '—'
+            : entry.value;
+        return `
+          <tr>
+            <th scope="row">${escapeHtml(entry.label)}</th>
+            <td>${escapeHtml(displayValue)}</td>
+          </tr>`;
+      })
+      .join('');
+
+    const doc = snapshotWindow.document;
+    doc.open();
+    doc.write(`<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -698,32 +693,211 @@ ready(() => {
     </div>
   </body>
 </html>`);
-          doc.close();
-          snapshotOpened = true;
+    doc.close();
+    return true;
+  };
+
+  const getServiceLabel = (form, value) => {
+    if (!value) {
+      return '';
+    }
+    if (typeof CSS !== 'undefined' && CSS.escape) {
+      const input = form.querySelector(`input[name="serviceType"][value="${CSS.escape(value)}"]`);
+      if (input) {
+        const label = input.closest('label');
+        const strong = label ? label.querySelector('strong') : null;
+        if (strong) {
+          return strong.textContent.trim();
         }
       }
-      const baseMessage = form.dataset.successMessage || 'Thank you! Your message has been sent.';
-      let feedbackMessage = baseMessage;
-      if (snapshotEntries.length) {
-        feedbackMessage += snapshotOpened
-          ? ' A booking snapshot has opened in a new tab for your records.'
-          : ' Please allow pop-ups to view your booking snapshot.';
+    }
+    return value;
+  };
+
+  const buildTemplateParams = (form, snapshotEntries, submittedAt) => {
+    const formData = new FormData(form);
+    const pickValue = (...keys) => {
+      for (const key of keys) {
+        const raw = formData.get(key);
+        if (typeof raw === 'string') {
+          const trimmed = raw.trim();
+          if (trimmed) {
+            return trimmed;
+          }
+        }
+      }
+      return '';
+    };
+
+    const name = pickValue('name', 'fullName') || 'Website visitor';
+    const email = pickValue('email') || EMAILJS_CONFIG.fallbackEmail;
+    const phone = pickValue('phone');
+    const contactMethod =
+      pickValue('contactMethod', 'contactPreference') || (phone ? 'Phone' : email ? 'Email' : 'Not specified');
+
+    const serviceValue = pickValue('helpType', 'service', 'serviceType');
+    const helpType = getServiceLabel(form, serviceValue) || 'General enquiry';
+
+    const message =
+      pickValue('message', 'notes', 'details', 'address', 'accessInstructions') || '— No message provided —';
+
+    const additionalInfoSections = [];
+
+    const extras = formData.getAll('extras').filter(Boolean);
+    const contextFields = [
+      ['location', 'Location'],
+      ['address', 'Address'],
+      ['date', 'Preferred date'],
+      ['time', 'Preferred time'],
+      ['access', 'Access'],
+      ['floorArea', 'Floor area'],
+      ['bedrooms', 'Bedrooms'],
+      ['bathrooms', 'Bathrooms'],
+    ];
+
+    contextFields.forEach(([key, label]) => {
+      const value = pickValue(key);
+      if (value) {
+        additionalInfoSections.push(`${label}: ${value}`);
+      }
+    });
+
+    if (extras.length) {
+      additionalInfoSections.push(`Extras: ${extras.join(', ')}`);
+    }
+
+    if (snapshotEntries.length) {
+      const formatted = snapshotEntries
+        .map((entry) => {
+          const showValue =
+            entry.value && !(entry.value === entry.defaultValue && placeholderPattern.test(entry.defaultValue));
+          const value = showValue ? entry.value : '—';
+          return `${entry.label}: ${value}`;
+        })
+        .join('\n');
+      additionalInfoSections.push('Booking snapshot:\n' + formatted);
+    }
+
+    if (window.location?.pathname) {
+      additionalInfoSections.push(`Page: ${window.location.pathname}`);
+    }
+
+    if (submittedAt) {
+      additionalInfoSections.push(`Submitted: ${submittedAt}`);
+    }
+
+    return {
+      name,
+      email,
+      phone: phone || 'Not provided',
+      contactMethod,
+      helpType,
+      message,
+      additionalInfo: additionalInfoSections.join('\n') || 'No additional info provided.',
+    };
+  };
+
+  const setSubmittingState = (form, isSubmitting) => {
+    const submitButton = form.querySelector('[type="submit"]');
+    if (!submitButton) {
+      return;
+    }
+    if (isSubmitting) {
+      submitButton.dataset.originalText = submitButton.textContent;
+      submitButton.textContent = 'Sending…';
+      submitButton.disabled = true;
+    } else {
+      submitButton.textContent = submitButton.dataset.originalText || submitButton.textContent;
+      submitButton.disabled = false;
+    }
+  };
+
+  forms.forEach((form) => {
+    const alertEl = form.querySelector('.alert');
+    const isBookingForm = form.hasAttribute('data-booking-form');
+    const successTarget = form.getAttribute('data-success-target');
+    const successModalController = successTarget ? modalControllers.get(successTarget) : null;
+
+    if (isBookingForm) {
+      setupBookingForm(form);
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
       }
 
-      if (alertEl) {
-        alertEl.textContent = feedbackMessage;
-        alertEl.classList.remove('error');
-        alertEl.classList.add('success');
-      }
-
-      if (successModalController) {
-        successModalController.open({
-          message: baseMessage,
-          snapshotOpened: snapshotEntries.length ? snapshotOpened : undefined,
+      const snapshotEntries = typeof form.__getBookingSnapshot === 'function' ? form.__getBookingSnapshot() : [];
+      let submittedAt = '';
+      try {
+        submittedAt = new Date().toLocaleString('en-AU', {
+          dateStyle: 'medium',
+          timeStyle: 'short',
+          timeZoneName: 'short',
         });
+      } catch (error) {
+        submittedAt = new Date().toLocaleString();
       }
 
-      form.reset();
+      if (!window.emailjs?.send) {
+        if (alertEl) {
+          alertEl.textContent = 'Message failed: email service is unavailable. Please try again later.';
+          alertEl.classList.add('error');
+          alertEl.classList.remove('success');
+        }
+        return;
+      }
+
+      const templateParams = buildTemplateParams(form, snapshotEntries, submittedAt);
+      const baseMessage = form.dataset.successMessage || 'Thank you! Your message has been sent.';
+      let snapshotOpened = false;
+
+      setSubmittingState(form, true);
+      try {
+        await window.emailjs.send(
+          EMAILJS_CONFIG.serviceId,
+          EMAILJS_CONFIG.templateId,
+          templateParams,
+          EMAILJS_CONFIG.publicKey
+        );
+
+        if (snapshotEntries.length) {
+          snapshotOpened = openSnapshotWindow(snapshotEntries, submittedAt);
+        }
+
+        let feedbackMessage = baseMessage;
+        if (snapshotEntries.length) {
+          feedbackMessage += snapshotOpened
+            ? ' A booking snapshot has opened in a new tab for your records.'
+            : ' Please allow pop-ups to view your booking snapshot.';
+        }
+
+        if (alertEl) {
+          alertEl.textContent = feedbackMessage;
+          alertEl.classList.remove('error');
+          alertEl.classList.add('success');
+        }
+
+        if (successModalController) {
+          successModalController.open({
+            message: baseMessage,
+            snapshotOpened: snapshotEntries.length ? snapshotOpened : undefined,
+          });
+        }
+
+        form.reset();
+      } catch (error) {
+        console.error('Email send failed:', error);
+        if (alertEl) {
+          alertEl.textContent = 'We were unable to send your message. Please try again or call 1300 555 010.';
+          alertEl.classList.add('error');
+          alertEl.classList.remove('success');
+        }
+      } finally {
+        setSubmittingState(form, false);
+      }
     });
   });
 
