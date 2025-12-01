@@ -673,6 +673,15 @@ body.nav-open .nav-overlay {
   color: var(--dark-color);
 }
 
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #0d4d88;
+  margin: 0 0 0.35rem;
+}
+
 .section .subtitle {
   text-align: center;
   max-width: 720px;
