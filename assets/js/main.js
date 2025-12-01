@@ -254,7 +254,7 @@ ready(() => {
   const forms = document.querySelectorAll('[data-form]');
 
   const EMAILJS_CONFIG = {
-    serviceId: 'service_template_website',
+    serviceId: 'service_siv8rsh',
     templateId: 'template_website',
     publicKey: 'Of49R5dVYZ12Ur3tc',
     fallbackEmail: 'info@shinysideup.au',
