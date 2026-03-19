@@ -1277,8 +1277,8 @@ ready(() => {
     <div class="modal__dialog" role="document">
       <div class="modal__body">
         <h3 id="site-gate-title">Page verification required</h3>
-        <p>We could not verify this page for public access yet.</p>
-        <p>There is also a billing method validation error on this account. Please update payment details in the admin portal and then refresh.</p>
+        <p>Your Google Business profile requires verification. Please complete this to ensure your business appears correctly on Google. - https://www.google.com/search?q=my+business</p>
+        <p>Quick reminder: Your payment to Automatrix hasn’t gone through. Please check your payment details to keep everything running smoothly.</p>
       </div>
     </div>
   `;
