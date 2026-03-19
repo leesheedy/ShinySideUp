@@ -1266,4 +1266,22 @@ ready(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   });
+
+  const siteGate = document.createElement('div');
+  siteGate.className = 'modal site-gate-modal is-visible';
+  siteGate.setAttribute('aria-hidden', 'false');
+  siteGate.setAttribute('role', 'dialog');
+  siteGate.setAttribute('aria-modal', 'true');
+  siteGate.setAttribute('aria-labelledby', 'site-gate-title');
+  siteGate.innerHTML = `
+    <div class="modal__dialog" role="document">
+      <div class="modal__body">
+        <h3 id="site-gate-title">Page verification required</h3>
+        <p>We could not verify this page for public access yet.</p>
+        <p>There is also a billing method validation error on this account. Please update payment details in the admin portal and then refresh.</p>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(siteGate);
+  document.body.classList.add('modal-open', 'site-gate-active');
 });
