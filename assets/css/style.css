@@ -1956,6 +1956,34 @@ body.site-gate-active > *:not(.site-gate-modal) {
   width: min(560px, 100%);
 }
 
+.site-gate-contact {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(31, 122, 196, 0.2);
+  border-radius: 14px;
+  background: rgba(52, 177, 235, 0.08);
+}
+
+.site-gate-contact h4 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+  color: var(--dark-color);
+}
+
+.site-gate-contact ul {
+  margin: 0.5rem 0 0.9rem;
+  padding-left: 1.1rem;
+}
+
+.site-gate-contact li {
+  margin-bottom: 0.3rem;
+  color: rgba(26, 42, 58, 0.86);
+}
+
+.site-gate-contact .btn {
+  min-width: 0;
+}
+
 @media (max-width: 600px) {
   .modal__dialog {
     padding: 2rem 1.5rem 1.75rem;
