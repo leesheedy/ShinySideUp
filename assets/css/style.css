@@ -1941,6 +1941,21 @@ body.modal-open {
   overflow: hidden;
 }
 
+body.site-gate-active > *:not(.site-gate-modal) {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.site-gate-modal {
+  z-index: 2100;
+  background: rgba(9, 16, 25, 0.68);
+}
+
+.site-gate-modal .modal__dialog {
+  width: min(560px, 100%);
+}
+
 @media (max-width: 600px) {
   .modal__dialog {
     padding: 2rem 1.5rem 1.75rem;
