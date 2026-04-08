@@ -1267,30 +1267,34 @@ ready(() => {
     }
   });
 
-  const siteGate = document.createElement('div');
-  siteGate.className = 'modal site-gate-modal is-visible';
-  siteGate.setAttribute('aria-hidden', 'false');
-  siteGate.setAttribute('role', 'dialog');
-  siteGate.setAttribute('aria-modal', 'true');
-  siteGate.setAttribute('aria-labelledby', 'site-gate-title');
-  siteGate.innerHTML = `
-    <div class="modal__dialog" role="document">
-      <div class="modal__body">
-        <h3 id="site-gate-title">Page verification required</h3>
-        <p>Your Google Business profile requires verification. Please complete this to ensure your business appears correctly on Google. - https://www.google.com/search?q=my+business</p>
-        <p>Quick reminder: Your payment to Automatrix hasn’t gone through. Please check your payment details to keep everything running smoothly.</p>
-        <div class="site-gate-contact" aria-label="Customer support contacts">
-          <h4>Need help? Contact Shiny Side Up</h4>
-          <p>If customers need assistance while verification is in progress, our team is here to help.</p>
-          <ul>
-            <li><strong>Call:</strong> <a href="tel:0493308683">0493 308 683</a></li>
-            <li><strong>Email:</strong> <a href="mailto:info@shinysideup.au">info@shinysideup.au</a></li>
-          </ul>
-          <a class="btn secondary" href="contact.html">Open contact page</a>
+  const isContactPage = window.location.pathname.endsWith('/contact.html') || window.location.pathname === '/contact.html';
+
+  if (!isContactPage) {
+    const siteGate = document.createElement('div');
+    siteGate.className = 'modal site-gate-modal is-visible';
+    siteGate.setAttribute('aria-hidden', 'false');
+    siteGate.setAttribute('role', 'dialog');
+    siteGate.setAttribute('aria-modal', 'true');
+    siteGate.setAttribute('aria-labelledby', 'site-gate-title');
+    siteGate.innerHTML = `
+      <div class="modal__dialog" role="document">
+        <div class="modal__body">
+          <h3 id="site-gate-title">Page verification required</h3>
+          <p>Your Google Business profile requires verification. Please complete this to ensure your business appears correctly on Google. - https://www.google.com/search?q=my+business</p>
+          <p>Quick reminder: Your payment to Automatrix hasn’t gone through. Please check your payment details to keep everything running smoothly.</p>
+          <div class="site-gate-contact" aria-label="Customer support contacts">
+            <h4>Need help? Contact Shiny Side Up</h4>
+            <p>If customers need assistance while verification is in progress, our team is here to help.</p>
+            <ul>
+              <li><strong>Call:</strong> <a href="tel:0493308683">0493 308 683</a></li>
+              <li><strong>Email:</strong> <a href="mailto:info@shinysideup.au">info@shinysideup.au</a></li>
+            </ul>
+            <a class="btn secondary" href="contact.html">Open contact page</a>
+          </div>
         </div>
       </div>
-    </div>
-  `;
-  document.body.appendChild(siteGate);
-  document.body.classList.add('modal-open', 'site-gate-active');
+    `;
+    document.body.appendChild(siteGate);
+    document.body.classList.add('modal-open', 'site-gate-active');
+  }
 });
